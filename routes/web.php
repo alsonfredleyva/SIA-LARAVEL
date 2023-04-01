@@ -13,8 +13,16 @@
 |
 */
 
+
 $router->get('/', function () use ($router) {
     return $router->app->version();
 });
+$router->get('/users',['uses' => 'UserController@aimex']); //get all users 
 
-$router->get('/users',['uses' => 'UserController@getUsers']);
+$router->get('/guser/{id}', 'UserController@show'); //get user by id
+
+$router->post('/auser', 'UserController@ADD'); // create new user
+
+$router->put('/uuser/{id}', 'UserController@UPD');  //update user
+
+$router->delete('/duser/{id}', 'UserController@DELETE'); //delete

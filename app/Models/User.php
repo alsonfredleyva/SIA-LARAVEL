@@ -7,6 +7,6 @@ class User extends Model{
     protected $table = 'tbl_user';
     // column sa table
     protected $fillable = [
-        'username', 'password'
+        'username', 'password', 'id'
     ];
 }
