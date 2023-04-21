@@ -1,53 +1,92 @@
 <?php
 namespace App\Http\Controllers;
-use Illuminate\Http\Request;
+
 use App\Models\User;
+use Illuminate\Http\Response;
+use App\Traits\ApiResponser;
+use Illuminate\Http\Request;
+use DB;
 Class UserController extends Controller {
+use ApiResponser;
 private $request;
-public function __construct(Request $request){
+public function __construct(Request $request) {
 $this->request = $request;
 }
-    public function aimex(){ /*Return/GE the list of users*/
-        $users = User::all();
-        return response()->json($users, 200);
-    }
-    public function show($id) /*Update the existing author*/
-    {
-        return User::where('id','like','%'.$id.'%')->get();
-    }
-    public function ADD(Request $request ){ /*create new user*/
-        $rules = [
-        'firstName' => 'required|max:20',
-        'lastName' => 'required|max:20',
-        ];
-        $this->validate($request,$rules);
-        $user = User::create($request->all());
-        return $user;
-       
+public function getUsers(){
+//$users = User::all();
+$users = DB::connection('mysql')
+->select("Select * from tbl_user");
+return $this->successResponse($users);
+//return response()->json($users, 200);
 }
-    public function UPD(Request $request,$id) /*update and existing author*/
-    {
-    $rules = [
-    'firstName' => 'max:20',
-    'lastName' => 'max:20',
-    ];
-    $this->validate($request, $rules);
-    $user = User::findOrFail($id);
-    $user->fill($request->all());
+/**
+* Return the list of users
+* @return Illuminate\Http\Response
+*/
 
-    // if no changes happen
-    if ($user->isClean()) {  /*remove an existing user*/
-    return $this->errorResponse('At least one value must
-    change', Response::HTTP_UNPROCESSABLE_ENTITY);
-    }
-    $user->save();
-    return $user;
+public function index()
+{
+$users = User::all();
+return $this->successResponse($users);
 }
-    public function DELETE($id) 
-    {
-    $user = User::findOrFail($id);
-    $user->delete();
+public function add(Request $request ){
+$rules = [
+'username' => 'required|max:20',
+'password' => 'required|max:20',
+'gender' => 'required|in:Male,Female',
+];
+$this->validate($request,$rules);
+$user = User::create($request->all());
+return $this->successResponse($user,Response::HTTP_CREATED);
+}
+/**
+* Obtains and show one user
+* @return Illuminate\Http\Response
+*/
+public function show($id)
+{
+//$user = User::findOrFail($id);
+$user = User::where('userid',$id)->first();
+if($user){
+return $this->successResponse($user);
+}
+{
+return $this->errorResponse('user ID Does Not Exists', Response::HTTP_NOT_FOUND);
+}
+}
+/**
+* Update an existing author
+* @return Illuminate\Http\Response
+*/
+public function update(Request $request,$id)
+{
+$rules = [
+'username' => 'max:20', 
+'password' => 'max:20',
+'gender' => 'in:Male,Female',
+];
+$this->validate($request, $rules);
+$user = User::findOrFail($id);
+$user->fill($request->all());
 
+// if no changes happen
+if ($user->isClean()) {
+return $this->errorResponse('At least one value must
+change', Response::HTTP_UNPROCESSABLE_ENTITY);
+}
+$user->save();
+return $this->successResponse($user);
 
-    }
+}
+/**
+* Remove an existing user
+* @return Illuminate\Http\Response
+*/
+public function delete($id)
+{
+$user = User::findOrFail($id);
+$user->delete();
+
+return $this->successResponse($user);
+}
 }
