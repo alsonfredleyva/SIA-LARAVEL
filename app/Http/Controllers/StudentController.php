@@ -80,11 +80,13 @@ return $this->successResponse($user);
 * Remove an existing user
 * @return Illuminate\Http\Response
 */
-public function delete($id)
-{
-$user = User::findOrFail($id);
-$user->delete();
-
+public function delete($id){
+$user = User::where('userid',$id)->delete();
+if($user){
 return $this->successResponse($user);
+}
+{
+return $this->errorResponse('the User ID not found', Response::HTTP_NOT_FOUND);
+}
 }
 }
