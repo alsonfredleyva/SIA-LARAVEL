@@ -17,16 +17,16 @@ return $router->app->version();
 });
 // unsecure routes
 $router->group(['prefix' => 'api'], function () use ($router) {
-$router->get('/users',['uses' => 'UserController@getUsers']);
+$router->get('/users',['uses' => 'StudentController@getUsers']);
 
 });
 // more simple routes
-$router->get('/users', 'UserController@index'); // get all users record
-$router->post('/users', 'UserController@add'); // create new user record
-$router->get('/users/{id}', 'UserController@show'); // get user by id
-$router->put('/users/{id}', 'UserController@update'); // update user record
-$router->patch('/users/{id}', 'UserController@update'); // update user record
-$router->delete('/users/{id}', 'UserController@delete'); // delete record
+$router->get('/users', 'StudentController@index'); // get all users record
+$router->post('/cusers', 'StudentController@add'); // create new user record
+$router->get('/gusers/{id}', 'StudentController@show'); // get user by id
+$router->put('/uusers/{id}', 'StudentController@update'); // update user record
+$router->patch('/uusers/{id}', 'StudentController@update'); // update user record
+$router->delete('/dusers/{id}', 'StudentController@delete'); // delete record
 
 /*
 <?php
